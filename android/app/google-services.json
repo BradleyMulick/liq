@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "608078940202",
+    "project_id": "liquidmoney-fdd7d",
+    "storage_bucket": "liquidmoney-fdd7d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608078940202:android:6a29525096e74a5bb25b53",
+        "android_client_info": {
+          "package_name": "com.liquid5"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608078940202-febpp9m4u1euvkmc4f9avbiakfkt45av.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKp94iviNosY8C00EFMe1HtLak5CQCcFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608078940202-febpp9m4u1euvkmc4f9avbiakfkt45av.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "608078940202-kbidqo9kn0e0jftofaq3feogth2mj6sg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.liquidMoney"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
