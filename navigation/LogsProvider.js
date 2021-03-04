@@ -3,15 +3,20 @@ import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const FluidContext = createContext()
+export const LogsContext = createContext()
 const STORAGE_KEY = '@save_age'
 
 
 
-export const FluidProvider = ({ children }) => {
-    const [maxFluids, setMaxFluids] = useState('')
-    const [dailyTotal, setDailyTotal] = useState('')
+export const LogsProvider = ({ children }) => {
 
+    const [dailyTotal, setDailyTotal] = useState('')
+    const [allLogs, setAllLogs] = useState([])
+    const [everyLiquid, setEveryLiquid] = useState([
+        { text: "Learn about React" },
+        { text: "Meet friend for lunch" },
+        { text: "Build really cool todo app" }
+    ])
 
 
     const readData = async () => {
@@ -27,23 +32,24 @@ export const FluidProvider = ({ children }) => {
         }
     }
     useEffect(() => {
-        readData()
-    }, [maxFluids])
+        // readData()
+    }, [])
 
 
 
     return (
-        <FluidContext.Provider
+        <LogsContext.Provider
             value={[
-                maxFluids,
-                setMaxFluids,
+
                 dailyTotal,
                 setDailyTotal,
-
-
+                allLogs,
+                setAllLogs,
+                everyLiquid,
+                setEveryLiquid
             ]}
         >
             { children}
-        </FluidContext.Provider >
+        </LogsContext.Provider >
     )
 }

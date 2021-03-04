@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, FlatList, Alert, TouchableHighlight, Pressable, Modal, Image, TextInput, } from 'react-native'
+import { View, Text, StyleSheet, Button, FlatList, ScrollView, Alert, TouchableHighlight, Pressable, Modal, Image, TextInput, TouchableOpacity } from 'react-native'
 import { AuthContext } from '../navigation/AuthProvider'
 import { FluidContext } from '../navigation/FluidProvider'
+import { LogsContext } from '../navigation/LogsProvider'
 import FormButton from '../components/FormButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
+import Task from '../components/LogItem'
 // import { firebase } from '../firebase/Firebase'
 // firebase.initializeApp(config);
 
@@ -23,14 +24,37 @@ const HomeScreen = () => {
     // const [newData, setNewData] = useState(false)
     // const [index, setIndex] = useState(-1)
     const [totalPerccy, setTotalPerccy] = useState('')
-    const [allLogs, setAllLogs] = useContext(FluidContext)
+
+    const [allLogs, setAllLogs] = useContext(LogsContext)
+    const [everyLiquid, setEveryLiquid] = useContext(FluidContext)
+    const [everyAll, setEveryAll] = useState([])
+    const [value, setValue] = useState('')
+
+
+
+    const handleAddTodo = () => {
+        if (value.length > 0) {
+            setEveryAll([...everyAll, {
+                text: value, key: Date.now(), checked:
+                    false
+            }])
+            setAllLogs(JSON.stringify(everyAll))
+            console.log(allLogs + "yasssssssssss")
+            setValue('')
+        }
+    }
+
 
     console.log(allLiquids)
+    console.log(everyLiquid)
     const dailyDough = () => {
-        const percenty = dailyTotal / maxFluids
+        const percenty = parseInt(dailyTotal) / parseInt(maxFluids)
+
+
         const totPercenty = percenty * 100
 
         console.log(totPercenty)
+
         setTotalPerccy(totPercenty)
     }
 
@@ -79,17 +103,22 @@ const HomeScreen = () => {
 
     const confirmAddition = (allLiquid) => {
         const newLiquid = [...allLiquids, allLiquid]
-        // setDailyTotal[dailyTotal + fluidLevel]
-        console.log(newLiquid + "why")
-        const numT = parseInt(dailyTotal)
-        console.log(numT)
+
+
+
+
         setDailyTotal(dailyTotal + fluidLevel)
         setModalVisible(!modalVisible)
         setFluidLevel(0)
+        handleAddTodo()
+        setAllLogs(everyAll)
+        console.log(allLogs + "Whattttttt")
+
         AsyncStorage.setItem("storedLiquid", JSON.stringify(newLiquid)).then(() => {
             setAllLiquids(newLiquid)
 
         }).catch(error => console.log("shit"))
+        Alert.alert("Makinnnn Moneyyyy ..... run roulette function")
     }
 
     const cancelLiq = () => {
@@ -99,8 +128,9 @@ const HomeScreen = () => {
     }
 
     const clearLiquids = () => {
-        AsyncStorage.setItem("liq", JSON.stringify([])).then(() => {
+        AsyncStorage.setItem("storedLiquid", JSON.stringify([])).then(() => {
             setAllLiquids([])
+
         })
     }
 
@@ -123,7 +153,7 @@ const HomeScreen = () => {
         loadTodo()
         dailyDough()
         // getNotes()
-    }, [])
+    }, [dailyTotal])
     return (
 
         <View style={styles.container}>
@@ -219,8 +249,37 @@ const HomeScreen = () => {
                                     style={{ width: 50, height: 50 }} />
                                 <Text style={styles.textStyle}>Cancel</Text>
                             </Pressable>
+                            {/* <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => clearLiquids()}
+                            >
+                                <Image source={{ uri: 'https://uxwing.com/wp-content/themes/uxwing/download/01-user_interface/red-x.png' }}
+                                    style={{ width: 50, height: 50 }} />
+                                <Text style={styles.textStyle}>Clear liquids</Text>
+                            </Pressable> */}
 
                         </View>
+                        {/* <TextInput
+                            style={styles.textInput}
+                            multiline={true}
+                            onChangeText={(value) => setValue(value)}
+                            placeholder={'Do it now!'}
+                            placeholderTextColor="white"
+                            value={value}
+                        />
+                        <TouchableOpacity
+                            onPress={() => handleAddTodo()}>
+                            <Text>Click here</Text>
+                        </TouchableOpacity>
+                        <ScrollView style={{ width: '100%' }}>
+                            {everyAll.map((task) => (
+                                <Task
+                                    text={task.text}
+                                    key={task.key}
+                                />
+                            ))
+                            }
+                        </ScrollView> */}
 
                     </View>
                 </View>
@@ -290,7 +349,7 @@ const HomeScreen = () => {
             <View style={styles.dailyTotalDisplay}>
 
                 <Text style={styles.dailyTotalText}>{dailyTotal} / {maxFluids}</Text>
-                <Text>{totalPerccy}</Text>
+                <Text>{totalPerccy}%</Text>
             </View>
             <FormButton buttonTitle="Logout" onPress={() => logout()} />
         </View>

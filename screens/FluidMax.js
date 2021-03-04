@@ -23,7 +23,7 @@ const FluidMax = ({ navigation }) => {
             await
 
                 AsyncStorage.setItem(STORAGE_KEY, maxFluids)
-            alert('Data successfully saved')
+            alert('Fluid max changed')
         } catch (e) {
             alert('Failed to save the data to the storage')
         }
@@ -53,7 +53,7 @@ const FluidMax = ({ navigation }) => {
             const keys = await AsyncStorage.getAllKeys();
             await AsyncStorage.multiRemove(keys);
             setMaxFluids(0)
-            alert('Storage successfully cleared!')
+            alert('Fluid MAX cleared!')
 
         } catch (e) {
             alert('Failed to clear the async storage.')
