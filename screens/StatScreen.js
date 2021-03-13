@@ -123,173 +123,177 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-import React, { Component } from 'react';
-import {
-    View,
-    Text,
+// import React, { Component } from 'react';
+// import {
+//     View,
+//     Text,
 
-    StyleSheet,
-    TouchableOpacity,
-    ScrollView,
-    TextInput,
-    Keyboard,
-    ActivityIndicator,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-export default class StatScreen extends Component {
-    state = {
-        isEdit: null,
-        list: [],
-        isLoading: false,
-        editText: '',
-    };
-    componentDidMount = () => {
-        this.setState({ isLoading: true });
-        // AsyncStorage.removeItem('list')
-        AsyncStorage.getItem('list')
-            .then(list => {
-                if (list) {
-                    this.setState({ list: JSON.parse(list), isLoading: false });
-                } else {
-                    this.setState({ list: [], isLoading: false });
-                }
-            })
-            .catch(err => {
-                this.setState({ isLoading: false });
-            });
-    };
-    add = () => {
-        let list = this.state.list;
-        list.push('');
-        this.setState({ list: list });
-        this.saveToStorage();
+//     StyleSheet,
+//     TouchableOpacity,
+//     ScrollView,
+//     TextInput,
+//     Keyboard,
+//     ActivityIndicator,
+// } from 'react-native';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+// import LogsList from '../components/LogsList';
+// export default class StatScreen extends Component {
+//     state = {
+//         isEdit: null,
+//         list: [],
+//         isLoading: false,
+//         editText: '',
+//     };
+//     componentDidMount = () => {
+//         this.setState({ isLoading: true });
+//         // AsyncStorage.removeItem('list')
+//         AsyncStorage.getItem('list')
+//             .then(list => {
+//                 if (list) {
+//                     this.setState({ list: JSON.parse(list), isLoading: false });
+//                 } else {
+//                     this.setState({ list: [], isLoading: false });
+//                 }
+//             })
+//             .catch(err => {
+//                 this.setState({ isLoading: false });
+//             });
+//     };
+//     add = () => {
+//         let list = this.state.list;
+//         list.push('');
+//         this.setState({ list: list });
+//         this.saveToStorage();
 
-        this.setEdit(list.length - 1);
-        console.log(list)
-    };
-    setEdit = index => {
-        if (this.state.isEdit !== index) {
-            this.setState({ isEdit: index, editText: this.state.list[index] });
-        }
-    };
-    setList = (text, index) => {
-        let list = this.state.list;
-        list[index] = text;
-        this.setState({ list: list, isEdit: null, editText: '' });
+//         this.setEdit(list.length - 1);
+//         console.log(list)
+//     };
+//     setEdit = index => {
+//         if (this.state.isEdit !== index) {
+//             this.setState({ isEdit: index, editText: this.state.list[index] });
+//         }
+//     };
+//     setList = (text, index) => {
+//         let list = this.state.list;
+//         list[index] = text;
+//         this.setState({ list: list, isEdit: null, editText: '' });
 
-        this.saveToStorage();
-    };
-    saveToStorage = () => {
-        let data = JSON.stringify(this.state.list);
-        AsyncStorage.setItem('list', data);
-    };
-    deleteItem = index => {
-        let list = this.state.list;
-        list.splice(index, 1);
-        this.setState({ list: list });
-        this.saveToStorage();
-    };
-    render() {
-        return (
-            <SafeAreaView>
-                <ScrollView style={style.container}>
-                    <View style={style.header}>
-                        <Text style={style.headerText}>Liquid Log</Text>
-                    </View>
-                    {this.state.isLoading ? (
-                        <ActivityIndicator color="#d28888" size="large" />
-                    ) : (
-                            <View style={style.body}>
-                                {this.state.list.map((item, key) => (
-                                    <React.Fragment>
-                                        {this.state.isEdit === null || this.state.isEdit !== key ? (
-                                            <TouchableOpacity
-                                                style={style.item}
-                                                activeOpacity={0.5}
-                                                onLongPress={() => this.setEdit(key)}>
-                                                <Text style={style.itemText}>{item}</Text>
-                                                <TouchableOpacity
-                                                    style={style.itemDelete}
-                                                    onPress={() => this.deleteItem(key)}>
-                                                    <Text style={style.itemDeleteText}>Delete</Text>
-                                                </TouchableOpacity>
-                                            </TouchableOpacity>
-                                        ) : null}
-                                        {this.state.isEdit !== null ? (
-                                            key == this.state.isEdit ? (
-                                                <TextInput
-                                                    style={style.itemInput}
-                                                    onBlur={() => this.setList(this.state.editText, key)}
-                                                    onSubmitEditing={() =>
-                                                        this.setList(this.state.editText, key)
-                                                    }
-                                                    value={this.state.editText}
-                                                    autoFocus
-                                                    onChangeText={editText => this.setState({ editText })}
-                                                />
-                                            ) : null
-                                        ) : null}
-                                    </React.Fragment>
-                                ))}
-                                <TouchableOpacity style={style.btnAdd} onPress={() => this.add()}>
-                                    <Text style={style.btnAddText}>Add</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                </ScrollView>
-            </SafeAreaView>
-        );
-    }
-}
+//         this.saveToStorage();
+//     };
+//     saveToStorage = () => {
+//         let data = JSON.stringify(this.state.list);
+//         AsyncStorage.setItem('list', data);
+//     };
+//     deleteItem = index => {
+//         let list = this.state.list;
+//         list.splice(index, 1);
+//         this.setState({ list: list });
+//         this.saveToStorage();
+//     };
+//     render() {
+//         return (
+//             <SafeAreaView>
+//                 <ScrollView style={style.container}>
+//                     <View style={style.header}>
+//                         <Text style={style.headerText}>Liquid Log</Text>
+//                     </View>
+//                     {this.state.isLoading ? (
+//                         <ActivityIndicator color="#d28888" size="large" />
+//                     ) : (
+//                         <View style={style.body}>
+//                             {this.state.list.map((item, key) => (
+//                                 <React.Fragment>
+//                                     {this.state.isEdit === null || this.state.isEdit !== key ? (
+//                                         <TouchableOpacity
+//                                             style={style.item}
+//                                             activeOpacity={0.5}
+//                                             onLongPress={() => this.setEdit(key)}>
+//                                             <Text style={style.itemText}>{item}</Text>
+//                                             <TouchableOpacity
+//                                                 style={style.itemDelete}
+//                                                 onPress={() => this.deleteItem(key)}>
+//                                                 <Text style={style.itemDeleteText}>Delete</Text>
+//                                             </TouchableOpacity>
+//                                         </TouchableOpacity>
+//                                     ) : null}
+//                                     {this.state.isEdit !== null ? (
+//                                         key == this.state.isEdit ? (
+//                                             <TextInput
+//                                                 style={style.itemInput}
+//                                                 onBlur={() => this.setList(this.state.editText, key)}
+//                                                 onSubmitEditing={() =>
+//                                                     this.setList(this.state.editText, key)
+//                                                 }
+//                                                 value={this.state.editText}
+//                                                 autoFocus
+//                                                 onChangeText={editText => this.setState({ editText })}
+//                                             />
+//                                         ) : null
+//                                     ) : null}
+//                                 </React.Fragment>
+//                             ))}
+//                             <TouchableOpacity style={style.btnAdd} onPress={() => this.add()}>
+//                                 <Text style={style.btnAddText}>Add</Text>
+//                             </TouchableOpacity>
+//                         </View>
+//                     )}
+//                 </ScrollView>
+//                 <View>
+//                     <LogsList />
+//                 </View>
+//             </SafeAreaView>
+//         );
+//     }
+// }
 
-const style = StyleSheet.create({
-    container: { backgroundColor: '#f2f2f2', height: '100%' },
-    header: {
-        backgroundColor: '#d2d2d2',
-        elevation: 5,
-        paddingHorizontal: '5%',
-        paddingVertical: 20,
-    },
-    headerText: {
-        fontSize: 20,
-    },
-    btnAdd: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    btnAddText: {
-        fontSize: 25,
-        fontWeight: '700',
-    },
-    body: { paddingHorizontal: '4%', paddingVertical: 15 },
-    item: {
-        marginBottom: 10,
-        backgroundColor: '#fff',
-        padding: 10,
-        minHeight: 50,
-        position: 'relative',
-    },
-    itemDelete: {
-        position: 'absolute',
-        fontSize: 16,
-        padding: 10,
-        right: 0,
-    },
-    itemDeleteText: {
-        fontSize: 16,
-    },
-    itemText: {
-        fontSize: 16,
-        paddingHorizontal: '1%',
-    },
-    itemInput: {
-        borderBottomWidth: 1,
-        fontSize: 16,
-    },
-});
+// const style = StyleSheet.create({
+//     container: { backgroundColor: '#f2f2f2', height: '100%' },
+//     header: {
+//         backgroundColor: '#d2d2d2',
+//         elevation: 5,
+//         paddingHorizontal: '5%',
+//         paddingVertical: 20,
+//     },
+//     headerText: {
+//         fontSize: 20,
+//     },
+//     btnAdd: {
+//         flex: 1,
+//         flexDirection: 'column',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//         marginTop: 20,
+//     },
+//     btnAddText: {
+//         fontSize: 25,
+//         fontWeight: '700',
+//     },
+//     body: { paddingHorizontal: '4%', paddingVertical: 15 },
+//     item: {
+//         marginBottom: 10,
+//         backgroundColor: '#fff',
+//         padding: 10,
+//         minHeight: 50,
+//         position: 'relative',
+//     },
+//     itemDelete: {
+//         position: 'absolute',
+//         fontSize: 16,
+//         padding: 10,
+//         right: 0,
+//     },
+//     itemDeleteText: {
+//         fontSize: 16,
+//     },
+//     itemText: {
+//         fontSize: 16,
+//         paddingHorizontal: '1%',
+//     },
+//     itemInput: {
+//         borderBottomWidth: 1,
+//         fontSize: 16,
+//     },
+// });
 
 
 
@@ -566,3 +570,68 @@ const style = StyleSheet.create({
 
 //     }
 // })
+
+
+
+
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useContext } from 'react/cjs/react.development';
+import LogForm from '../components/LogForm';
+import LogsList from '../components/LogsList';
+import { LogsContext } from '../navigation/LogsProvider';
+import sample from '../sample.json'
+
+
+
+const StatScreen = () => {
+    // const [toDoList, setToDoList] = useState([{
+    //     "id": 1,
+    //     "task": "Give dog a bath",
+    //     "complete": true
+    // }, {
+    //     "id": 2,
+    //     "task": "Do laundry",
+    //     "complete": true
+    // }]);
+
+    const [allLogs, setAllLogs] = useContext(LogsContext)
+    console.log("all logs stats page" + allLogs)
+    const addTask = (userInput) => {
+        let copy = [...allLogs];
+        const date = new Date().toString()
+        copy = [...copy, { id: allLogs.length + 1, task: userInput, complete: false, date: date }];
+        setAllLogs(copy);
+    }
+
+    return (
+        <SafeAreaView>
+            <ScrollView>
+                <View style={styles.container}>
+
+                    <LogsList allLogs={allLogs} />
+
+
+                </View>
+            </ScrollView>
+        </SafeAreaView>
+    )
+}
+
+export default StatScreen
+
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: "#fff",
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    text: {
+        fontSize: 20,
+        color: '#333333'
+    }
+})

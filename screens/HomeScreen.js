@@ -1,131 +1,100 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { View, Text, StyleSheet, Button, FlatList, ScrollView, Alert, TouchableHighlight, Pressable, Modal, Image, TextInput, TouchableOpacity } from 'react-native'
 import { AuthContext } from '../navigation/AuthProvider'
 import { FluidContext } from '../navigation/FluidProvider'
 import { LogsContext } from '../navigation/LogsProvider'
 import FormButton from '../components/FormButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import sample from '../sample.json'
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Task from '../components/LogItem'
-// import { firebase } from '../firebase/Firebase'
-// firebase.initializeApp(config);
+import LogForm from '../components/LogForm';
+
+
+
 
 
 const HomeScreen = () => {
     const { user, logout } = useContext(AuthContext)
-    const [maxFluids, setMaxFluids] = useContext(FluidContext)
     const [modalVisible, setModalVisible] = useState(false);
-    const [fluidLevel, setFluidLevel] = useState(0);
-    const [dailyTotal, setDailyTotal] = useState(0)
-    const [text, setText] = useState('');
-    const [allLiquids, setAllLiquids] = useState([])
-    const [newInput, setNewInput] = useState('1000')
-    // const [list, setList] = useState([])
-    // const [newData, setNewData] = useState(false)
-    // const [index, setIndex] = useState(-1)
     const [totalPerccy, setTotalPerccy] = useState('')
 
+    const [fluidLevel, setFluidLevel] = useState(0);
+    const [dailyTotal, setDailyTotal] = useState(0)
+
+    const [allLiquids, setAllLiquids] = useState([])
+
+    const [maxFluids, setMaxFluids] = useContext(FluidContext)
+
+    const [liquidType, setLiquidType] = useState('')
+
+    console.log(allLiquids + "thing 1")
+    console.log(sample + " sample")
+
     const [allLogs, setAllLogs] = useContext(LogsContext)
-    const [everyLiquid, setEveryLiquid] = useContext(FluidContext)
-    const [everyAll, setEveryAll] = useState([])
-    const [value, setValue] = useState('')
 
 
+    const saveLogs = async () => {
+        try {
+            console.log(allLogs.length + "save function")
+            await AsyncStorage.setItem('allTheLogs', JSON.stringify(allLogs))
+            setFluidLevel(0)
 
-    const handleAddTodo = () => {
-        if (value.length > 0) {
-            setEveryAll([...everyAll, {
-                text: value, key: Date.now(), checked:
-                    false
-            }])
-            setAllLogs(JSON.stringify(everyAll))
-            console.log(allLogs + "yasssssssssss")
-            setValue('')
+        } catch (e) {
+            alert('Failed to save the logs to the storage')
         }
     }
 
+    const handleChange = fluids => setFluidLevel(fluids)
 
-    console.log(allLiquids)
-    console.log(everyLiquid)
+    const handleAddTodo = () => {
+
+        // if (value.length > 0) {
+        //     setEveryAll([...everyAll, {
+        //         text: value, key: Date.now(), checked:
+        //             false
+        //     }])
+        //     setAllLogs(JSON.stringify(everyAll))
+        //     console.log(allLogs + "yasssssssssss")
+        //     setValue('')
+        // }
+
+
+        let copy = [...allLogs];
+        const date = new Date().toString()
+        copy = [...copy, { key: allLogs.length + 2, id: allLogs.length + 1, task: fluidLevel, complete: false, date: date }];
+        setAllLogs(copy)
+        alert('New Log added!')
+        setModalVisible(!modalVisible)
+    }
+
+    const total = () => {
+        setDailyTotal(parseInt(dailyTotal) + parseInt(fluidLevel))
+    }
+
     const dailyDough = () => {
         const percenty = parseInt(dailyTotal) / parseInt(maxFluids)
-
-
         const totPercenty = percenty * 100
-
-        console.log(totPercenty)
-
+        console.log(totPercenty + "PERCENT")
         setTotalPerccy(totPercenty)
     }
 
-
-    // const adder = () => {
-    //     let readyToAdd = [...allLogs, "11"]
-    //     readyToAdd.push(fluidLevel)
-    //     setAllLogs(readyToAdd)
-
-
-    //     console.log(readyToAdd)
-
-    //     let data = JSON.stringify(readyToAdd);
-    //     AsyncStorage.setItem('liq', data);
-    // }
-
-    // const handleSubmit = () => {
-    //     let currData = [...allLogs]
-    //     if (newData) {
-    //         currData.push(fluidLevel)
-    //         setAllLogs(currData)
-    //         setNewData(!newData)
-    //     } else {
-    //         currData[index] = fluidLevel
-    //         setAllLogs(currData)
-    //         setIndex(-1)
-    //     }
-    //     setFluidLevel('')
-    //     setNotes(currData)
-    // }
-
-
-
-    // const getNotes = async () => {
-    //     const allData = await AsyncStorage.getItem('liq')
-    //     setAllLogs(allData ? JSON.parse(allData) : [])
-    //     console.log(allData)
-    // }
-
-    // const setNotes = (currData) => {
-    //     const stringifyData = JSON.stringify(currData)
-    //     AsyncStorage.setItem('liq', stringifyData)
-    // }
-
-
-
-    const confirmAddition = (allLiquid) => {
-        const newLiquid = [...allLiquids, allLiquid]
-
-
-
-
-        setDailyTotal(dailyTotal + fluidLevel)
-        setModalVisible(!modalVisible)
-        setFluidLevel(0)
-        handleAddTodo()
-        setAllLogs(everyAll)
-        console.log(allLogs + "Whattttttt")
-
-        AsyncStorage.setItem("storedLiquid", JSON.stringify(newLiquid)).then(() => {
-            setAllLiquids(newLiquid)
-
-        }).catch(error => console.log("shit"))
-        Alert.alert("Makinnnn Moneyyyy ..... run roulette function")
+    const increase = () => {
+        setFluidLevel(parseInt(fluidLevel) + 1)
     }
+
+    const decrease = () => {
+        setFluidLevel(parseInt(fluidLevel) - 1)
+    }
+
 
     const cancelLiq = () => {
         setFluidLevel(0)
         setModalVisible(!modalVisible)
 
     }
+
 
     const clearLiquids = () => {
         AsyncStorage.setItem("storedLiquid", JSON.stringify([])).then(() => {
@@ -135,25 +104,49 @@ const HomeScreen = () => {
     }
 
 
+
+    const liquidTypeSetter = (prop) => {
+        setModalVisible(true)
+        setLiquidType(prop)
+    }
+
+
     const loadTodo = () => {
         try {
-            AsyncStorage.getItem("storedLiquid").then(data => {
+            AsyncStorage.getItem("allTheLogs").then(data => {
                 if (data !== null) {
-                    setAllLiquids(JSON.parse(data))
-                    console.log(allLiquids + "hi")
+                    setAllLogs(JSON.parse(data))
+                    console.log(allLogs + "hi")
                 }
             })
-
-
         } catch (e) {
             alert('Failed to fetch the data from storage')
         }
     }
+
+
+
+
     useEffect(() => {
+        // addLog()
         loadTodo()
-        dailyDough()
+        // dailyDough()
+
         // getNotes()
+    }, [])
+
+
+
+    useEffect(() => {
+        saveLogs()
+        total()
+
+    }, [allLogs])
+
+    useEffect(() => {
+        dailyDough()
     }, [dailyTotal])
+
     return (
 
         <View style={styles.container}>
@@ -169,25 +162,24 @@ const HomeScreen = () => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Beer</Text>
 
-                        <Text>You have this much fluid {fluidLevel}</Text>
+                        <Text style={styles.modalText}>{liquidType}</Text>
 
                         <View style={styles.liquidAdd}>
                             <TouchableHighlight onPress={() => setFluidLevel(120)} underlayColor="white">
                                 <View style={styles.row} >
                                     <Image source={{ uri: 'https://cdn5.vectorstock.com/i/1000x1000/87/14/simple-round-icon-coffee-cup-vector-13978714.jpg' }}
                                         style={{ width: "25%", height: "75%" }} />
-                                    <Text >Beer Can Small</Text>
-                                    <Text >120ml</Text>
+                                    <Text >Small</Text>
+
                                 </View>
                             </TouchableHighlight>
                             <TouchableHighlight onPress={() => setFluidLevel(240)} underlayColor="white">
                                 <View style={styles.row} >
                                     <Image source={{ uri: 'https://cdn5.vectorstock.com/i/1000x1000/87/14/simple-round-icon-coffee-cup-vector-13978714.jpg' }}
                                         style={{ width: "25%", height: "75%" }} />
-                                    <Text>Beer Can Medium</Text>
-                                    <Text>200ml</Text>
+                                    <Text>Medium</Text>
+
 
                                 </View>
                             </TouchableHighlight>
@@ -195,8 +187,8 @@ const HomeScreen = () => {
                                 <View style={styles.row} >
                                     <Image source={{ uri: 'https://cdn5.vectorstock.com/i/1000x1000/87/14/simple-round-icon-coffee-cup-vector-13978714.jpg' }}
                                         style={{ width: "25%", height: "75%" }} />
-                                    <Text>Beer Can Large</Text>
-                                    <Text>360ml</Text>
+                                    <Text>Large</Text>
+
 
                                 </View>
                             </TouchableHighlight>
@@ -206,23 +198,27 @@ const HomeScreen = () => {
                         <View style={styles.confirm2}>
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
-                                onPress={() => setFluidLevel(fluidLevel + 1)}
+                                onPress={increase}
                             >
 
                                 <Image source={{ uri: 'https://www.iconpacks.net/icons/2/free-up-arrow-icon-3097-thumb.png' }}
                                     style={{ width: 50, height: 50 }} />
                             </Pressable>
-                            {/* <TextInput
-                                style={{ height: 40, width: "30%" }}
-                                placeholder="100"
-                                onChangeText={text => setText(text)}
-                                defaultValue={fluidLevel}
 
-                            /> */}
-                            <Text style={styles.liquidSetter} >{fluidLevel}</Text>
+                            {/* <Text style={styles.liquidSetter} >{fluidLevel}</Text> */}
+
+                            <TextInput
+                                keyboardType='numeric'
+                                style={styles.liquidSetter}
+                                placeholder="0"
+                                onChangeText={handleChange}
+
+                                onSubmitEditing={() => handleAddTodo(allLogs)}
+                            > {fluidLevel}</TextInput>
+                            {/* <LogForm addTask={addTask} /> */}
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
-                                onPress={() => setFluidLevel(fluidLevel - 1)}
+                                onPress={decrease}
                             >
 
                                 <Image source={{ uri: 'https://static.thenounproject.com/png/59745-200.png' }}
@@ -231,55 +227,33 @@ const HomeScreen = () => {
                         </View>
                         <View style={styles.confirm2}>
                             <Pressable
-                                style={[styles.button, styles.buttonClose]}
-
-                                onPress={() => confirmAddition()}
-
+                                style={styles.confirmButt}
+                                onPress={() => handleAddTodo(allLogs)}
                             >
-                                <Image source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/checkmark-flat.png' }}
-                                    style={{ width: 50, height: 50 }} />
-                                <Text style={styles.textStyle}>Confirm</Text>
+                                <Text style={styles.confirmText}>Confirm</Text>
                             </Pressable>
-
+                        </View>
+                        <View style={styles.confirm2}>
                             <Pressable
-                                style={[styles.button, styles.buttonClose]}
+                                style={[styles.cancelButt, styles.buttonClose]}
                                 onPress={() => cancelLiq()}
                             >
-                                <Image source={{ uri: 'https://uxwing.com/wp-content/themes/uxwing/download/01-user_interface/red-x.png' }}
-                                    style={{ width: 50, height: 50 }} />
-                                <Text style={styles.textStyle}>Cancel</Text>
+                                <Text style={styles.cancelText}>Cancel</Text>
                             </Pressable>
-                            {/* <Pressable
-                                style={[styles.button, styles.buttonClose]}
+                        </View>
+                        <View style={styles.confirm2}>
+                            <Pressable
+                                style={[styles.buttonClose]}
                                 onPress={() => clearLiquids()}
                             >
                                 <Image source={{ uri: 'https://uxwing.com/wp-content/themes/uxwing/download/01-user_interface/red-x.png' }}
                                     style={{ width: 50, height: 50 }} />
                                 <Text style={styles.textStyle}>Clear liquids</Text>
-                            </Pressable> */}
+                            </Pressable>
+
 
                         </View>
-                        {/* <TextInput
-                            style={styles.textInput}
-                            multiline={true}
-                            onChangeText={(value) => setValue(value)}
-                            placeholder={'Do it now!'}
-                            placeholderTextColor="white"
-                            value={value}
-                        />
-                        <TouchableOpacity
-                            onPress={() => handleAddTodo()}>
-                            <Text>Click here</Text>
-                        </TouchableOpacity>
-                        <ScrollView style={{ width: '100%' }}>
-                            {everyAll.map((task) => (
-                                <Task
-                                    text={task.text}
-                                    key={task.key}
-                                />
-                            ))
-                            }
-                        </ScrollView> */}
+                        <Icon name="glass" size={30} color="#900" />
 
                     </View>
                 </View>
@@ -289,56 +263,57 @@ const HomeScreen = () => {
 
             <View style={styles.icons}>
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('COFFEE')} underlayColor="white">
                         <Image source={{ uri: 'https://newcastlebeach.org/images/coffee-icon-free-7.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('WINE1')} underlayColor="white">
                         <Image source={{ uri: 'https://img.icons8.com/pastel-glyph/2x/wine-glass.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('BEER1')} underlayColor="white">
                         <Image source={{ uri: 'http://simpleicon.com/wp-content/uploads/beer.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('SODA')} underlayColor="white">
                         <Image source={{ uri: 'https://i.pinimg.com/originals/d7/95/aa/d795aaaaa386c4f3a4252615f8673f5b.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
-                <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                <View style={styles.box} onPress={() => setLiquidType('wine')}>
+                    <Pressable onPress={() => liquidTypeSetter('WINNE 2')} underlayColor="white">
                         <Image source={{ uri: 'https://img.icons8.com/pastel-glyph/2x/wine-glass.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('BEER 2')} underlayColor="white">
                         <Image source={{ uri: 'http://simpleicon.com/wp-content/uploads/beer.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
 
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('CROSSSS')} underlayColor="white">
                         <Image source={{ uri: 'http://getdrawings.com/free-icon/medical-cross-icon-53.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('LOGGGGG')} underlayColor="white">
                         <Image source={{ uri: 'http://simpleicon.com/wp-content/uploads/list.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
                 </View>
+
                 <View style={styles.box} onPress={() => Alert.alert('Button Clicked')}>
-                    <Pressable onPress={() => setModalVisible(true)} underlayColor="white">
+                    <Pressable onPress={() => liquidTypeSetter('wambulance')} underlayColor="white">
                         <Image source={{ uri: 'https://www.freeiconspng.com/thumbs/ambulance-icon/ambulance-icon-20.png' }}
                             style={{ width: "100%", height: "100%" }} />
                     </Pressable>
@@ -391,7 +366,11 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         height: '70%',
         borderColor: 'black',
-        borderWidth: 1,
+        borderWidth: 1, shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: .8,
+        shadowRadius: 4,
+        borderRadius: 4,
         margin: 10,
         paddingTop: '10%',
     },
@@ -400,6 +379,32 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         height: 80,
         width: 80,
+    },
+
+    confirmButt: {
+        width: '98%',
+        height: '100%',
+        alignItems: 'center',
+        backgroundColor: 'blue',
+        borderColor: 'black',
+        borderWidth: 1,
+        borderRadius: 7
+    },
+
+    confirmText: {
+        fontSize: 48
+    },
+
+    cancelButt: {
+        width: '98%',
+        height: '100%',
+        alignItems: 'center',
+        borderColor: 'black',
+        borderWidth: 1,
+    },
+
+    cancelText: {
+        fontSize: 24
     },
 
     box: {
@@ -412,7 +417,7 @@ const styles = StyleSheet.create({
         margin: 6,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: .8,
+        shadowOpacity: .4,
         shadowRadius: 4,
 
     },
@@ -432,6 +437,10 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         height: "90%"
+    },
+
+    modalText: {
+        fontSize: 36,
     },
 
     row: {
@@ -462,6 +471,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: "row",
         flexWrap: "wrap",
+    },
+
+    inputerr: {
+
     },
 
     liquidSetter: {

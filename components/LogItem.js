@@ -1,13 +1,15 @@
 import React from 'react'
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
 
-const Task = (props) => (
-    <View style={styles.taskWrapper}>
+const Task = ({ todo }) => {
+    return (
+        <View style={styles.taskWrapper}>
 
-        <Text style={styles.task}>{props.text}</Text>
+            <Text style={styles.task}>{todo.task}{todo.date}</Text>
 
-    </View>
-)
+        </View>
+    )
+}
 
 export default Task
 

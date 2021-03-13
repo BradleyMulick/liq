@@ -18,6 +18,7 @@ export const FluidProvider = ({ children }) => {
         try {
             const fluids = await AsyncStorage.getItem(STORAGE_KEY)
 
+
             if (fluids !== null) {
 
                 setMaxFluids(fluids)

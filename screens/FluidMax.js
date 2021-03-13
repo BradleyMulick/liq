@@ -68,10 +68,13 @@ const FluidMax = ({ navigation }) => {
 
     const onSubmitEditing = () => {
 
-        if (!maxFluids) return
+        if (!maxFluids)
+            return
         saveData(maxFluids)
 
         navigation.navigate('Home')
+
+
 
     }
 
@@ -90,7 +93,7 @@ const FluidMax = ({ navigation }) => {
                 <View style={styles.fluflu}>
                     <TextInput
                         style={styles.input}
-
+                        keyboardType='numeric'
                         placeholder={text}
                         onChangeText={onChangeText}
                         onSubmitEditing={onSubmitEditing}
