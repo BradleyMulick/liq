@@ -11,7 +11,7 @@ const STORAGE_KEY = '@save_age'
 const FluidMax = ({ navigation }) => {
     const [maxFluids, setMaxFluids] = useContext(FluidContext)
     // const [maxFluids, setMaxFluids] = useState('')
-    const [text, setText] = useState('');
+
 
 
 
@@ -64,6 +64,9 @@ const FluidMax = ({ navigation }) => {
 
 
 
+
+
+    const onChangeTemp = temp => setText(temp)
     const onChangeText = fluids => setMaxFluids(fluids)
 
     const onSubmitEditing = () => {
@@ -73,9 +76,6 @@ const FluidMax = ({ navigation }) => {
         saveData(maxFluids)
 
         navigation.navigate('Home')
-
-
-
     }
 
     useEffect(() => {
@@ -94,7 +94,7 @@ const FluidMax = ({ navigation }) => {
                     <TextInput
                         style={styles.input}
                         keyboardType='numeric'
-                        placeholder={text}
+                        placeholder='0'
                         onChangeText={onChangeText}
                         onSubmitEditing={onSubmitEditing}
                     ></TextInput>

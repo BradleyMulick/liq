@@ -30,7 +30,7 @@ const LogsList = () => {
     // }))
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Logs LIST </Text>
+            <Text style={styles.text}>Fluid Log</Text>
             {allLogs.length ? allLogs.map(todo => {
                 return (
                     <LogItem todo={todo} />
@@ -48,10 +48,12 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        width: '100%'
     },
     text: {
-        fontSize: 20,
-        color: '#333333'
+        fontSize: 36,
+        color: '#4facfe',
+        fontWeight: 'bold'
     }
 })
