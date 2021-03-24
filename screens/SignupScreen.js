@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import FormButton from '../components/FormButton';
 import FormInput from '../components/FormInput';
 import { AuthContext } from '../navigation/AuthProvider'
+
 
 const SignupScreen = ({ navigation }) => {
     const [fullName, setFullName] = useState('')
@@ -16,8 +17,9 @@ const SignupScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text>Create An Account</Text>
-
+            <View style={styles.logoHolder}>
+                <Image source={require('../assets/liquidMoney.png')} style={{ width: '100%', height: '100%' }} />
+            </View>
 
             <FormInput
                 labelValue={fullName}
@@ -27,6 +29,7 @@ const SignupScreen = ({ navigation }) => {
                 keyboardType="default"
                 autoCapitalization="none"
                 autoCorrect={false}
+
             />
             <FormInput
                 labelValue={email}
@@ -51,20 +54,13 @@ const SignupScreen = ({ navigation }) => {
                 iconType="lock"
                 secureTextEntry={true}
             /> */}
+            <View style={styles.button}>
+                <FormButton
+                    buttonTitle="Sign Up"
+                    onPress={() => register(email, password, user)}
 
-            <FormButton
-                buttonTitle="Sign In"
-                onPress={() => register(email, password, user)}
-            />
-            {/* 
-            <TouchableOpacity style={styles.forgotButton} onPress={() => { }}>
-                <Text style={styles.navButtonText}>Forgot Password</Text>
-            </TouchableOpacity> */}
-
-            <TouchableOpacity style={styles.forgotButton} onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.navButtonText}>Have an account? sign in</Text>
-            </TouchableOpacity>
-
+                />
+            </View>
 
         </View>
     )
@@ -75,12 +71,24 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        width: '100%',
+        backgroundColor: '#ebebeb'
     },
+    logoHolder: {
+        width: 300,
+        height: 150
+    },
+
     forgotButton: {
         borderWidth: 1,
         borderColor: 'black',
         padding: 20,
         marginTop: 10,
+    },
+
+    button: {
+        width: '70%',
+
     }
 })

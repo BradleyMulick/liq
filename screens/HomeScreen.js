@@ -10,18 +10,54 @@ import sample from '../sample.json'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Font5 from 'react-native-vector-icons/FontAwesome5';
 import MatCom from "react-native-vector-icons/MaterialCommunityIcons"
+import uuid from 'uuid'
 
+import PushNotification from "react-native-push-notification";
 
 
 
 import Task from '../components/LogItem'
 import LogForm from '../components/LogForm';
+import { MaterialBottomTabView } from '@react-navigation/material-bottom-tabs';
+import { getConfirmLocale } from 'antd/lib/modal/locale';
 
 
 
 
 
-const HomeScreen = () => {
+
+const HomeScreen = ({ navigation }) => {
+
+
+
+
+
+
+
+    const testPush = () => {
+        console.log('fuauachuahscahaq')
+        PushNotification.localNotification({
+
+
+            title: "My Notification Title", // (optional)
+            message: "My Notification Message", // (required)
+        });
+    }
+
+    const testCancel = () => {
+        PushNotification.cancelAllLocalNotifications()
+    }
+
+    const testSchedule = () => {
+        console.log("doe sit woekRR?")
+        PushNotification.localNotificationSchedule({
+            //... You can use all the options from localNotifications
+            message: "My Notification Message", // (required)
+            date: new Date(Date.now() + 5 * 1000), // in 60 secs
+            allowWhileIdle: true, // (optional) set notification to work while on doze, default: false
+        });
+    }
+
 
 
     const typeOfFLuids = [
@@ -43,6 +79,7 @@ const HomeScreen = () => {
 
 
 
+
     const { user, logout } = useContext(AuthContext)
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -56,8 +93,16 @@ const HomeScreen = () => {
     const [dailyTotal, setDailyTotal] = useState(0)
     const [todaysDate, setTodaysDate] = useState('')
 
-    const [liquidType, setLiquidType] = useState('water')
+    const [liquidType, setLiquidType] = useState('coffee')
 
+    const [overloadTracker, setOverloadTracker] = useState(false)
+    const [overloadColor, setOverloadColor] = useState('#4facfe')
+
+    const [firstSet, setFirstSet] = useState('')
+    const [specialKEy, setSpecialKey] = useState(0)
+
+
+    const [totalMoney, setTotalMoney] = useState(0)
     const saveLogs = async () => {
         try {
             console.log(allLogs.length + "save function")
@@ -68,13 +113,24 @@ const HomeScreen = () => {
             alert('Failed to save the logs to the storage')
         }
     }
+    // const saveDaily = async () => {
+    //     try {
+    //         console.log(allLogs.length + "save function")
+    //         await AsyncStorage.setItem('dailyTotal', JSON.stringify(dailyTotal))
+
+
+    //     } catch (e) {
+    //         alert('Failed to save the daily totaall!!! to the storage')
+    //     }
+    // }
 
     const showDate = () => {
         var date = new Date().getDate();
         var month = new Date().getMonth() + 1;
         var year = new Date().getFullYear();
-        Alert.alert(month + '/' + date + '/' + year);
+
         setTodaysDate(month + '/' + date + '/' + year);
+
     }
 
 
@@ -94,11 +150,25 @@ const HomeScreen = () => {
         // }
         let copy = [...allLogs];
         const date = new Date().toString()
-        copy = [...copy, { key: allLogs.length + 2, id: allLogs.length + 1, task: fluidLevel, complete: false, date: todaysDate, liquidType: liquidType }];
+        copy = [...copy, { key: uuid(), id: uuid(), task: fluidLevel, isEdit: null, editText: '', date: todaysDate, liquidType: liquidType }];
         setAllLogs(copy)
-        alert('New Log added!')
+        rollDie()
         setModalVisible(!modalVisible)
+
     }
+
+    const handleDeleteTodo = (index) => {
+        let list = allLogs
+        list.splice(index, 1)
+        setAllLogs(list)
+    }
+
+    // const handleUpDaily = () => {
+    //     let daily = [dailyTotal]
+    //     daily = [...daily, { key: Math.random(), total: dailyTotal }];
+    //     setDailyTotal(daily)
+    //     alert('added daily')
+    // }
 
     const total = () => {
         console.log(typeOfFLuids[1].icon + "playing")
@@ -109,16 +179,35 @@ const HomeScreen = () => {
         const percenty = parseInt(dailyTotal) / parseInt(maxFluids)
         const totPercenty = percenty * 100
         console.log(totPercenty + "PERCENT")
+
         setTotalPerccy(totPercenty + '%')
+        if (totPercenty > 80) {
+            setOverloadTracker(true)
+            setOverloadColor('red')
+            alert("Your are Going OVER your liquid consumption!")
+        } else {
+            setOverloadColor('#4facfe')
+        }
         console.log(totalPerccy)
     }
 
+    const rollDie = () => {
+        let roll = Math.floor(Math.random() * 4) + 1
+        if (roll === 3) {
+            alert('You won 25 cents')
+            setTotalMoney(totalMoney + .25)
+        } else {
+            alert('you didnt win')
+
+        }
+    }
+
     const increase = () => {
-        setFluidLevel(parseInt(fluidLevel) + 1)
+        setFluidLevel(parseInt(fluidLevel + 1))
     }
 
     const decrease = () => {
-        setFluidLevel(parseInt(fluidLevel) - 1)
+        setFluidLevel(parseInt(fluidLevel - 1))
     }
 
 
@@ -127,6 +216,9 @@ const HomeScreen = () => {
         setModalVisible(!modalVisible)
 
     }
+
+
+
 
 
     const clearLiquids = () => {
@@ -157,16 +249,32 @@ const HomeScreen = () => {
         }
     }
 
+    // const loadDaily = () => {
+    //     try {
+    //         AsyncStorage.getItem("dailyTotal").then(data => {
+    //             if (data !== null) {
+    //                 setAllLogs(JSON.parse(data))
+    //                 console.log(dailyTotal + "hi daily")
+    //             }
+    //         })
+    //     } catch (e) {
+    //         alert('Failed to fetch the data from storage')
+    //     }
+    // }
+
 
 
 
     useEffect(() => {
         // addLog()
         loadTodo()
+
         // dailyDough()
         showDate()
         // getNotes()
+
     }, [])
+
 
 
 
@@ -178,7 +286,33 @@ const HomeScreen = () => {
 
     useEffect(() => {
         dailyDough()
+
     }, [dailyTotal, maxFluids])
+
+    const alertSet = () => {
+        alert('Set Max liquid!!!')
+
+    }
+    // useEffect(() => {
+    //     AsyncStorage.getItem('firstSet').then(value => {
+    //         if (value == null) {
+    //             AsyncStorage.setItem('firstSet', 'true')
+    //             setFirstSet(true)
+    //             alertSet()
+    //             navigation.navigate('FluidMax')
+    //         } else {
+    //             setFirstSet(false)
+    //         }
+    //     })
+    // }, [])
+
+    useEffect(() => {
+        if (maxFluids === 0) {
+            navigation.navigate('FluidMax')
+            alert("SET YOUR MAX LIQUID VALUE")
+        }
+    }, [])
+
 
     return (
 
@@ -277,7 +411,18 @@ const HomeScreen = () => {
                 </View>
 
             </Modal>
+            <View>
+                <Text style={styles.totalMoney}>TOTAL: ${totalMoney}</Text>
+            </View>
+            <TouchableOpacity onPress={testPush()}>
+                <Button
+                    onPress={() => testPush()}
+                    title='Notify in 5'
 
+                >
+
+                </Button>
+            </TouchableOpacity>
 
             <View style={styles.icons}>
 
@@ -363,7 +508,7 @@ const HomeScreen = () => {
 
 
             </View>
-            <View style={{ height: `${totalPerccy}`, backgroundColor: '#4facfe', width: '100%', position: 'absolute', bottom: 0 }}></View>
+            <View style={{ height: `${totalPerccy}`, backgroundColor: `${overloadColor}`, width: '100%', position: 'absolute', bottom: 0, borderTopWidth: 3, borderColor: 'black' }}></View>
 
             <View style={styles.dailyTotalDisplay}>
 
@@ -371,7 +516,7 @@ const HomeScreen = () => {
 
             </View>
 
-            <FormButton buttonTitle="Logout" onPress={() => logout()} />
+            {/* <FormButton buttonTitle="Logout" onPress={() => logout()} /> */}
         </View>
 
 
@@ -409,13 +554,13 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         height: '70%',
         borderColor: 'black',
-        borderWidth: 1, shadowColor: '#000',
+
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: .8,
         shadowRadius: 4,
         borderRadius: 4,
         margin: 10,
-        paddingTop: '10%',
+        paddingTop: '5%',
         zIndex: 100,
 
     },
@@ -456,20 +601,24 @@ const styles = StyleSheet.create({
     },
 
     box: {
-        borderColor: 'black',
-        borderWidth: 1,
+        borderColor: '#707070',
+        borderWidth: 2,
         borderRadius: 8,
         backgroundColor: 'white',
         height: '18%',
         width: '23%',
-        margin: 6,
+        margin: 14,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: .4,
         shadowRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
 
+    },
+    totalMoney: {
+        fontSize: 24,
+        zIndex: 1000
     },
 
     modalView: {
@@ -486,7 +635,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-        height: "70%",
+        height: "auto",
 
 
     },

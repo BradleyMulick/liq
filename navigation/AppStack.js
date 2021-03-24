@@ -56,7 +56,7 @@ const AppStack = () => {
                 }}>
                 <Tab.Screen name="Home" component={HomeScreen} />
                 <Tab.Screen name="StatScreen" lazy="false" component={StatScreen} />
-                <Tab.Screen name="FluidMax" component={FluidMax} />
+                <Tab.Screen name="FluidMax" lazy="false" component={FluidMax} />
             </Tab.Navigator>
         </NavigationContainer>
 

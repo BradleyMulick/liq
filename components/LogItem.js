@@ -1,19 +1,29 @@
 import React from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, SafeAreaView } from 'react-native'
 import Ion from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Task = ({ todo }) => {
+const Task = ({ todo, handleDeleteTodo, id }) => {
+
+
+
+
+
     return (
 
         <View style={styles.taskWrapper}>
 
             <Text style={styles.task}>{todo.date}</Text>
+
             <Text style={styles.task}>{todo.liquidType}</Text>
-            <Ion name='water' size={30} color="#4facfe" />
+            <Ion name='water' size={25} color="#4facfe" />
             <Text style={styles.task}>{todo.task}mL</Text>
-
+            <TouchableOpacity
+                onPress={handleDeleteTodo(id)}
+            >
+                <Icon name='trash-o' size={25} color="#4facfe" />
+            </TouchableOpacity>
         </View>
-
     )
 }
 
@@ -23,20 +33,18 @@ const styles = StyleSheet.create({
     taskWrapper: {
         marginTop: '5%',
         flexDirection: 'row',
-        borderColor: '#000',
-        borderBottomWidth: 1.5,
+
         justifyContent: 'space-around',
         width: '100%',
         alignItems: 'stretch',
         minHeight: 40,
     },
     task: {
-        paddingBottom: 20,
+        paddingBottom: 10,
         paddingLeft: 10,
-        marginTop: 6,
+        alignItems: 'center',
         width: 'auto',
-        borderColor: '#F0F0F0',
-        borderBottomWidth: 1,
+
         fontSize: 17,
         fontWeight: 'bold',
         color: 'black',

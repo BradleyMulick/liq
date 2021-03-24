@@ -9,7 +9,7 @@ const STORAGE_KEY = '@save_age'
 
 
 export const FluidProvider = ({ children }) => {
-    const [maxFluids, setMaxFluids] = useState('')
+    const [maxFluids, setMaxFluids] = useState(0)
     const [dailyTotal, setDailyTotal] = useState('')
 
 
